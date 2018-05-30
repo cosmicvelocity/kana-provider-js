@@ -16,10 +16,13 @@
     "test": "test"
   },
   "scripts": {
-    "build": "node --max_old_space_size=8192 node_modules/babel-cli/bin/babel.js src --out-dir build",
-    "test": "node --max_old_space_size=8192 node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test node_modules/jest/bin/jest.js",
-    "hot": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./webpack-dev.config.js --hot",
-    "prod": "node ./node_modules/webpack-cli/bin/webpack.js --config ./webpack.config.js"
+    "build": "npm run production",
+    "test": "node ./node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test ./node_modules/jest/bin/jest.js",
+    "dev": "npm run development",
+    "development": "node ./node_modules/webpack-cli/bin/webpack.js -d --progress --hide-modules --config=./webpack.config.js",
+    "prod": "npm run production",
+    "production": "node ./node_modules/webpack-cli/bin/webpack.js -p --progress --hide-modules --config=./webpack.config.js",
+    "hot": "node ./node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --debug --inline --hot --config=./webpack-dev.config.js"
   },
   "repository": {
     "type": "git",
