@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>SAMPLE</title>
+    <script type="text/javascript">
+        var module = {};
+    </script>
+    <script src="index.js"></script>
+    <script type="text/javascript">
+        var KanaProviderFactory = module.exports.KanaProviderFactory;
+
+        document.addEventListener('DOMContentLoaded', function (evt) {
+            var nameElement = document.getElementById('name');
+            var kanaElement = document.getElementById('kana');
+            var provider = KanaProviderFactory.getProvider(nameElement, {
+                debug: true
+            });
+
+            provider
+                .on('error', function (type, message) {
+                    console.log('error', type, message);
+                })
+                .on('clear', function () {
+                    kanaElement.value = '';
+                })
+                .on('update', function (kana) {
+                    kanaElement.value = kanaElement.value + kana;
+                });
+        });
+    </script>
+</head>
+<body>
+    <main>
+        <form>
+            <dl>
+                <dt><label for="name">名前</label></dt>
+                <dd><input id="name" type="text" name="name"/></dd>
+                <dt><label for="kana">カナ</label></dt>
+                <dd><input id="kana" type="text" name="kana"/></dd>
+            </dl>
+        </form>
+    </main>
+</body>
+</html>

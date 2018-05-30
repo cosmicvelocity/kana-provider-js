@@ -1,0 +1,75 @@
+{
+  "name": "cosmicvelocity-kana-provider",
+  "version": "0.0.1",
+  "description": "Supports Kana input.",
+  "keywords": [
+    "es6",
+    "modules",
+    "util"
+  ],
+  "author": "Kouichi Machida <k-machida@aideo.co.jp>",
+  "license": "Apache-2.0",
+  "private": false,
+  "main": "build/index.js",
+  "directories": {
+    "lib": "build",
+    "test": "test"
+  },
+  "scripts": {
+    "build": "node --max_old_space_size=8192 node_modules/babel-cli/bin/babel.js src --out-dir build",
+    "test": "node --max_old_space_size=8192 node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test node_modules/jest/bin/jest.js",
+    "hot": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./webpack-dev.config.js --hot",
+    "prod": "node ./node_modules/webpack-cli/bin/webpack.js --config ./webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cosmicvelocity/kana-provider-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cosmicvelocity/kana-provider-js/issues"
+  },
+  "homepage": "https://github.com/cosmicvelocity/kana-provider-js#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.1.6",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "jest": "^23.0.1",
+    "jsdom": "^11.11.0",
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 3 versions",
+    "ie >= 11",
+    "Chrome >= 21",
+    "Firefox >= 28",
+    "Safari >= 6.1",
+    "Opera >= 12.1",
+    "iOS >= 7.1",
+    "Android >= 4.4"
+  ],
+  "jest": {
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "roots": [
+      "<rootDir>/test"
+    ],
+    "testRegex": "/test/.*\\.js$",
+    "verbose": true
+  }
+}
