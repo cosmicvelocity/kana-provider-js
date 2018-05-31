@@ -1,15 +1,15 @@
 'use strict';
 
-const path = require('path');
 const webpackConfig = require('./webpack.config');
 
 module.exports = Object.assign({}, webpackConfig, {
     mode: 'development',
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     devServer: {
         host: '0.0.0.0',
-        port: 3000,
-        contentBase: path.join(__dirname, '/'),
+        port: 8080,
+        contentBase: __dirname,
+        compress: true,
         disableHostCheck: true,
         hot: true,
         watchOptions: {
