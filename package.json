@@ -1,11 +1,12 @@
 {
-  "name": "cosmicvelocity-kana-provider",
+  "name": "@cosmicvelocity/kana-provider",
   "version": "0.0.1",
   "description": "Supports Kana input.",
   "keywords": [
     "es6",
     "modules",
-    "util"
+    "util",
+    "japanese"
   ],
   "author": "Kouichi Machida <k-machida@aideo.co.jp>",
   "license": "Apache-2.0",
@@ -33,7 +34,7 @@
   },
   "homepage": "https://github.com/cosmicvelocity/kana-provider-js#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -45,9 +46,11 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0",
-    "jest": "^23.0.1",
+    "hard-source-webpack-plugin": "^0.7.4",
+    "jest": "^23.1.0",
     "jsdom": "^11.11.0",
-    "webpack": "^4.10.1",
+    "thread-loader": "^1.1.5",
+    "webpack": "^4.10.2",
     "webpack-cli": "^2.1.4",
     "webpack-dev-server": "^3.1.4"
   },
