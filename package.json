@@ -1,6 +1,6 @@
 {
   "name": "@cosmicvelocity/kana-provider",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Supports Kana input.",
   "keywords": [
     "es6",
