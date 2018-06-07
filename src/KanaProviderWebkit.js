@@ -15,6 +15,13 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  * 文節の変換時も compositionend イベントが取れる。
  * 変換中も keydown, keyup は発生するため、変換中の削除を検出できるものの、かえって処理が複雑化するので、
  * 変換中の文字が減少した場合は変換文字列が削除されたと判断して履歴更新を行います。
+ *
+ * 確認バージョン
+ * Google Chrome 66.0.3359.158 (Android)
+ * Google Chrome 66.0.3359.181
+ * Google Chrome 67.0.3396.79
+ * Safari 11.1.1 (11605.2.8)
+ * Safari 11.0 (iOS)
  * 
  * 変換中テキストの取得:
  *  - compositionupdate イベント
@@ -26,9 +33,13 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  *  - compositionend イベント
  * 予測入力:
  *  - 検出できない
+ * 全角スペース:
+ *  - compositionupdate, compositionend イベントが発生しない。
+ *  - keydown イベントが key = Process, keyCode = 229, charCode = 0 で発生する。
+ *  - keyup イベントが key =  , keyCode = 32, charCode = 0 で発生する。
+ *  - input イベントが inputType = insertText, data = "全角スペース", isComposing = false で発生する。
  */
-export default class KanaProviderWebkit extends KeystrokeKanaProvider
-{
+export default class KanaProviderWebkit extends KeystrokeKanaProvider {
 
     /**
      * オブジェクトを初期化します。
@@ -73,7 +84,7 @@ export default class KanaProviderWebkit extends KeystrokeKanaProvider
                             this._fireClear();
                         }
                     }
-    
+
                     break;
                 default:
                     break;
@@ -101,9 +112,15 @@ export default class KanaProviderWebkit extends KeystrokeKanaProvider
         });
         this._element.addEventListener('input', (evt) => {
             !this._options.debug || console.log(`${evt.type}: inputType = ${evt.inputType}, data = ${evt.data}, isComposing = ${evt.isComposing}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+
+            if (this._options.allowSpace) {
+                if (evt.inputType === 'insertText' && this._options.spacePattern.test(evt.data)) {
+                    this._pushHistory(evt.data);
+                }
+            }
         });
     }
-    
+
     /**
      * 変換中のテキストを処理します。
      * 

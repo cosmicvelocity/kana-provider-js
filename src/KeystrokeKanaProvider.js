@@ -61,14 +61,20 @@ export default class KeystrokeKanaProvider extends KanaProvider {
             let maxLength = 0;
             const kanaParts = [];
 
-            for (let index = 0; index < this._histories.length; index++) {
-                const ch = this._histories[index];
+            if (1 < this._histories.length) {
+                for (let index = 0; index < this._histories.length; index++) {
+                    const ch = this._histories[index];
 
-                if (maxLength < ch.length) {
-                    maxLength = ch.length;
-                } else if (ch.length < maxLength) {
-                    kanaParts.push(this._histories[index - 1]);
-                    maxLength = 0;
+                    if (this._options.allowSpace && this._options.spacePattern.test(ch)) {
+                        // スペースを通す設定の場合は、例外的に通す。
+                        kanaParts.push(ch);
+                        maxLength = 0;
+                    } else if (maxLength < ch.length) {
+                        maxLength = ch.length;
+                    } else if (ch.length < maxLength) {
+                        kanaParts.push(this._histories[index - 1]);
+                        maxLength = 0;
+                    }
                 }
             }
 
@@ -92,7 +98,7 @@ export default class KeystrokeKanaProvider extends KanaProvider {
     _getLatestKana(s) {
         // 後ろからひらがなの部分をカナ入力値として取得します。
         const kanaArray = [];
-        
+
         s.split('')
             .reverse()
             .forEach(ch => {

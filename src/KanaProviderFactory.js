@@ -7,7 +7,6 @@
 
 'use strict';
 
-import KanaProvider from './KanaProvider';
 import KanaProviderWebkit from './KanaProviderWebkit';
 import KanaProviderEdge from './KanaProviderEdge';
 import KanaProviderIE from './KanaProviderIE';
@@ -45,7 +44,6 @@ export default class KanaProviderFactory {
         !normalizeOptions.debug || console.log(`userAgent: ${ua}`);
 
         // ブラウザの種別を取得します。
-        const isIE = (0 <= ua.indexOf('msie')) && (ua.indexOf('opera') < 0);
         const isIE11 = (0 <= ua.indexOf('trident/7'));
         const isEdge = (0 <= ua.indexOf('edge'));
         const isFirefox = (0 <= ua.indexOf('firefox'));

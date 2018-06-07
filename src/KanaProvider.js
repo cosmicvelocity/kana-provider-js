@@ -12,13 +12,22 @@ import EventEmitter from './EventEmitter';
 /**
  * KanaProvider のベースクラス。
  */
-export default class KanaProvider extends EventEmitter
-{
+export default class KanaProvider extends EventEmitter {
 
     /**
      * デフォルト設定を表します。
      */
     static defaultOptions = {
+
+        /**
+         * スペースを許可するかどうか。
+         */
+        allowSpace: true,
+
+        /**
+         * 許可するスペースのパターン。
+         */
+        spacePattern: /[\u0020\u3000]/,
 
         /**
          * カナとして扱うパターン。
@@ -90,7 +99,7 @@ export default class KanaProvider extends EventEmitter
      * @param {string} kana 入力されたカナ。
      */
     _fireUpdate(kana) {
-        const data = 
+        const data =
             this._options.toKatakana ?
                 kana.split('').map(
                     (ch) => {

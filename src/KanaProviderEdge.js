@@ -15,6 +15,10 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  * 変換中の削除時に keyup でキーコードの取得ができないため、
  * 変換中の文字が減少し、かつ変換中の文字にカナ以外を含む場合は文節変換が行われ、
  * それ以外の場合は変換文字列が削除されたと判断して履歴更新を行います。
+ *
+ * 確認バージョン
+ * Microsoft Edge 42.17134.1.0
+ * Microsoft EdgeHTML 17.17134
  * 
  * 変換中テキストの取得:
  *  - compositionupdate イベント
@@ -26,6 +30,9 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  *  - compositionend イベント
  * 予測入力:
  *  - 検出できない
+ * 全角スペース:
+ *  - compositionupdate, compositionend イベントが連続で発生する。
+ *  - keydown, keyup イベント共に、key = Unidentified, keyCode = 229, charCode = 0 になってしまうためこれらでは検出できない。
  */
 export default class KanaProviderEdge extends KeystrokeKanaProvider
 {
@@ -40,13 +47,13 @@ export default class KanaProviderEdge extends KeystrokeKanaProvider
         super(element, options);
 
         this._element.addEventListener('click', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
         });
         this._element.addEventListener('focus', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
         });
         this._element.addEventListener('keyup', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
 
             const value = evt.target.value;
             const keyCode = evt.keyCode;
@@ -69,21 +76,26 @@ export default class KanaProviderEdge extends KeystrokeKanaProvider
             }
         });
         this._element.addEventListener('keydown', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
         });
         this._element.addEventListener('compositionupdate', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
 
-            this._compositionUpdate(evt.data);
+            // 全角スペースを許可する設定かチェック。
+            if (this._options.allowSpace && this._options.spacePattern.test(evt.data)) {
+                this._pushHistory(evt.data);
+            } else {
+                this._compositionUpdate(evt.data);
+            }
         });
         this._element.addEventListener('compositionend', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
 
             // 履歴を確定します。
             this._confirmHistory();
         });
         this._element.addEventListener('input', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: inputType = ${evt.inputType}, data = ${evt.data}, isComposing = ${evt.isComposing}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: inputType = ${evt.inputType}, data = ${evt.data}, isComposing = ${evt.isComposing}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h +'"').join(",")}`);
         });
     }
 
@@ -92,7 +104,7 @@ export default class KanaProviderEdge extends KeystrokeKanaProvider
      * 
      * @param {string} composting 変換中のテキスト。
      */
-    _compositionUpdate(composting) { 
+    _compositionUpdate(composting) {
         // 後ろからひらがなの部分をカナ入力値として取得します。
         const latestKana = this._getLatestKana(composting);
 

@@ -15,7 +15,10 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  * 文節の変換時も compositionend イベントが取れる。
  * 変換中の削除時は keyup でキーコードの取得ができないため、
  * 変換中の文字が減少した場合は変換文字列が削除されたと判断して履歴更新を行います。
- * 
+ *
+ * 確認バージョン
+ * Firefox Quantum 60.0.2
+ *
  * 変換中テキストの取得:
  *  - compositionupdate イベント
  * 変換中テキストの削除:
@@ -26,6 +29,11 @@ import KeystrokeKanaProvider from './KeystrokeKanaProvider';
  *  - compositionend イベント
  * 予測入力:
  *  - 検出できない
+ * 全角スペース:
+ *  - compositionupdate, compositionend イベントが連続で発生する。この時 data には全角スペースが入る。
+ *  - keydown は発生しない。
+ *  - keyup イベントが key = , keyCode = 32 になってしまうためこれらでは検出できない。
+ *  - input イベントが data = undefined, isComposing = true で発生する。
  */
 export default class KanaProviderFirefox extends KeystrokeKanaProvider
 {
@@ -40,13 +48,13 @@ export default class KanaProviderFirefox extends KeystrokeKanaProvider
         super(element, options);
 
         this._element.addEventListener('click', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
         });
         this._element.addEventListener('focus', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
         });
         this._element.addEventListener('keyup', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
 
             const value = evt.target.value;
             const keyCode = evt.keyCode;
@@ -69,21 +77,26 @@ export default class KanaProviderFirefox extends KeystrokeKanaProvider
             }
         });
         this._element.addEventListener('keydown', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: key = ${evt.key}, keyCode = ${evt.keyCode}, charCode = ${evt.charCode}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
         });
         this._element.addEventListener('compositionupdate', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
 
-            this._compositionUpdate(evt.data);
+            // 全角スペースを許可する設定かチェック。
+            if (this._options.allowSpace && this._options.spacePattern.test(evt.data)) {
+                this._pushHistory(evt.data);
+            } else {
+                this._compositionUpdate(evt.data);
+            }
         });
         this._element.addEventListener('compositionend', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: data = ${evt.data}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
 
             // 履歴を確定します。
             this._confirmHistory();
         });
         this._element.addEventListener('input', (evt) => {
-            !this._options.debug || console.log(`${evt.type}: inputType = ${evt.inputType}, data = ${evt.data}, isComposing = ${evt.isComposing}, value = ${evt.target.value}, historyies: ${this._histories.join(",")}`);
+            !this._options.debug || console.log(`${evt.type}: inputType = ${evt.inputType}, data = ${evt.data}, isComposing = ${evt.isComposing}, value = ${evt.target.value}, historyies: ${this._histories.map(h => '"' + h + '"').join(",")}`);
         });
     }
 
