@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     <title>SAMPLE</title>
     <script type="text/javascript">
         var module = {};
@@ -13,6 +14,33 @@
         document.addEventListener('DOMContentLoaded', function (evt) {
             var nameElement = document.getElementById('name');
             var kanaElement = document.getElementById('kana');
+            var logElement = document.getElementById('log');
+
+            nameElement.addEventListener('click', function (evt) {
+                logElement.value = (evt.type + ': value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('focus', function (evt) {
+                logElement.value = (evt.type + ': value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('keydown', function (evt) {
+                logElement.value = (evt.type + ': key = ' + evt.key + ', keyCode = ' + evt.keyCode + ', charCode = ' + evt.charCode + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('keydown', function (evt) {
+                logElement.value = (evt.type + ': key = ' + evt.key + ', keyCode = ' + evt.keyCode + ', charCode = ' + evt.charCode + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('keyup', function (evt) {
+                logElement.value = (evt.type + ': key = ' + evt.key + ', keyCode = ' + evt.keyCode + ', charCode = ' + evt.charCode + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('compositionupdate', function (evt) {
+                logElement.value = (evt.type + ': data = ' + evt.data + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('compositionend', function (evt) {
+                logElement.value = (evt.type + ': data = ' + evt.data + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+            nameElement.addEventListener('input', function (evt) {
+                logElement.value = (evt.type + ': inputType = ' + evt.inputType + ', data = ' + evt.data + ', isComposing = ' + evt.isComposing + ', value = ' + evt.target.value + "\n") + logElement.value;
+            });
+
             var provider = KanaProviderFactory.getProvider(nameElement, {
                 debug: true
             });
@@ -22,23 +50,50 @@
                     console.log('error', type, message);
                 })
                 .on('clear', function () {
+                    console.log('clear');
+
                     kanaElement.value = '';
                 })
                 .on('update', function (kana) {
+                    console.log('update', kana);
+
                     kanaElement.value = kanaElement.value + kana;
                 });
         });
     </script>
+    <style type="text/css">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Open Sans", "Helvetica Neue", Helvetica, "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", Arial, "メイリオ", Meiryo, sans-serif;
+            font-size: 16px;
+        }
+
+        input,
+        textarea {
+            font-size: 1em;
+        }
+
+        dl {
+            margin-bottom: 2em;
+        }
+
+        .log {
+            height: 20em;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
     <main>
-        <form>
+        <form autocomplete="off">
             <dl>
                 <dt><label for="name">名前</label></dt>
-                <dd><input id="name" type="text" name="name"/></dd>
+                <dd><input id="name" type="text" name="name" autocomplete="off" /></dd>
                 <dt><label for="kana">カナ</label></dt>
-                <dd><input id="kana" type="text" name="kana"/></dd>
+                <dd><input id="kana" type="text" name="kana" autocomplete="off" /></dd>
+                <dt><label for="log">ログ</label></dt>
+                <dd><textarea id="log" class="log"></textarea></dd>
             </dl>
+            <button type="reset">クリア</button>
         </form>
     </main>
 </body>
