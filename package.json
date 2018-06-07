@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "npm run production",
+    "lint": "node ./node_modules/eslint/bin/eslint.js ./src",
     "test": "node ./node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test ./node_modules/jest/bin/jest.js",
     "dev": "npm run development",
     "development": "node ./node_modules/webpack-cli/bin/webpack.js -d --progress --hide-modules --config=./webpack.config.js",
@@ -35,6 +36,7 @@
   "homepage": "https://github.com/cosmicvelocity/kana-provider-js#readme",
   "devDependencies": {
     "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
