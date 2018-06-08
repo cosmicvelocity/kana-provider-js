@@ -50,13 +50,13 @@ input type="text" や textarea で変換時の内容を得る場合、keyup, inp
 npm を使っている場合は、下記のように導入できます。
 
 ```
-npm i cosmicvelocity-kana-provider
+npm i @cosmicvelocity/kana-provider
 ```
 
 ## 使い方
 
 ```javascript
-import KanaProviderFactory from 'cosmicvelocity-kana-provider';
+import KanaProviderFactory from '@cosmicvelocity/kana-provider';
 
 document.addEventListener('DOMContentLoaded', function () {
     var nameElement = document.getElementById('name');
